@@ -1,3 +1,28 @@
+/**
+ * ENTITY (Like the full system record)
+ *
+ * Purpose:
+ * Represents a table in the database.
+ *
+ * Technical:
+ * Annotated class (e.g., @Entity) mapped to a database table.
+ * Each field corresponds to a column.
+ *
+ * Communication:
+ * - Used by Repository
+ * - Used by Service (indirectly via Converter)
+ *
+ * Real-life example:
+ * This is the complete stored data:
+ * - ID
+ * - name
+ * - price
+ * - stock
+ * - timestamps
+ *
+ * It contains all internal information of the system.
+ */
+
 package com.erick.spring.entity;
 
 import jakarta.persistence.*;
