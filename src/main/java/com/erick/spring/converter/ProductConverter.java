@@ -30,10 +30,18 @@ package com.erick.spring.converter;
 import com.erick.spring.dto.ProductDTO;
 import com.erick.spring.entity.ProductEntity;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ProductConverter {
 
-    private ModelMapper modelMapper = new ModelMapper();
+    private ModelMapper modelMapper;
+
+    @Autowired
+    private void initialice(ModelMapper modelMapper) {
+        this.modelMapper = modelMapper;
+    }
 
     public ProductDTO entityToDto(ProductEntity productEntity) {
         return modelMapper.map(productEntity, ProductDTO.class);
