@@ -26,9 +26,9 @@ import com.erick.spring.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.Errors;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -42,6 +42,17 @@ public class ProductController {
     @GetMapping
     public ResponseEntity<List<ProductDTO>> getAllProducts() {
         return new ResponseEntity<>(productService.getAllProducts(), HttpStatus.OK);
+    }
+
+    @PostMapping
+    public ResponseEntity<String> addProduct(@Validated @RequestBody ProductDTO productDTO, Errors errors) {
+
+        if (errors.hasErrors()) {
+            throw new RuntimeException("the products has not been validated");
+        }
+
+        productService.addProduct(productDTO);
+        return new ResponseEntity<>("Product was added to the db", HttpStatus.CREATED);
     }
 
 

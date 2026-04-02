@@ -23,13 +23,22 @@
 
 package com.erick.spring.dto;
 
+import jakarta.validation.constraints.*;
+
 import java.io.Serializable;
 
 public class ProductDTO implements Serializable {
 
     private Integer id;
+    @NotEmpty
+    @Size(max = 50, min = 3)
     private String name;
+    @NotNull
+    @DecimalMax("10000")
+    @PositiveOrZero
     private Double price;
+    @NotEmpty
+    @Size(max = 100, min = 10)
     private String description;
 
     public Integer getId() {
