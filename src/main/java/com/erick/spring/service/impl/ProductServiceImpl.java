@@ -27,6 +27,8 @@ package com.erick.spring.service.impl;
 import com.erick.spring.converter.ProductConverter;
 import com.erick.spring.dto.ProductDTO;
 import com.erick.spring.entity.ProductEntity;
+import com.erick.spring.exception.ExistingInstanceException;
+import com.erick.spring.exception.InstanceUndefinedException;
 import com.erick.spring.repository.ProductRepository;
 import com.erick.spring.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -51,20 +54,47 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     public ProductDTO addProduct(ProductDTO productDTO) {
+
+        Optional<ProductEntity> productEntityOptional = productRepository.findByName(productDTO.getName());
+
+        if (productEntityOptional.isPresent()) {
+            throw new ExistingInstanceException("Product with this name already exist in DB");
+        }
         ProductEntity savedProduct = productRepository.save(productConverter.dtoToEntity(productDTO));
         return productConverter.entityToDto(savedProduct);
     }
 
+
+
     @Override
     @Transactional(readOnly = true)
     public ProductDTO getProductById(Integer productId) {
-        return null;
+        ProductDTO returnValue = null;
+
+        Optional<ProductEntity> productEntityOptional = productRepository.findById(productId);
+
+        if (productEntityOptional.isPresent()) {
+            ProductEntity productEntity = productEntityOptional.get();
+            returnValue = productConverter.entityToDto(productEntity);
+        } else {
+            throw new InstanceUndefinedException("The product with id " + productId + " has not been found");
+        }
+
+        return returnValue;
     }
+
 
     @Override
     @Transactional
     public ProductDTO updateProduct(ProductDTO productDTO, Integer productId) {
-        return null;
+
+        ProductDTO returnValue = null;
+        getProductById(productId);
+
+        productDTO.setId(productId);
+        ProductEntity productEntity = productRepository.save(productConverter.dtoToEntity(productDTO));
+
+        return productConverter.entityToDto(productEntity);
     }
 
     @Override

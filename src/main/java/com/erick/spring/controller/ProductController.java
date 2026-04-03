@@ -22,6 +22,7 @@
 package com.erick.spring.controller;
 
 import com.erick.spring.dto.ProductDTO;
+import com.erick.spring.exception.DataNotValidateException;
 import com.erick.spring.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -44,11 +45,16 @@ public class ProductController {
         return new ResponseEntity<>(productService.getAllProducts(), HttpStatus.OK);
     }
 
+    @GetMapping(value = "/{id}")
+    public ResponseEntity<ProductDTO> getById(@PathVariable("id") Integer productId) {
+        return new ResponseEntity<>(productService.getProductById(productId), HttpStatus.OK);
+    }
+
     @PostMapping
     public ResponseEntity<String> addProduct(@Validated @RequestBody ProductDTO productDTO, Errors errors) {
 
         if (errors.hasErrors()) {
-            throw new RuntimeException("the products has not been validated");
+            throw new DataNotValidateException("the products has not been validated");
         }
 
         productService.addProduct(productDTO);
