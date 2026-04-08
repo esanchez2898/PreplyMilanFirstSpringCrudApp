@@ -1,25 +1,51 @@
 /**
  * SERVICE IMPLEMENTATION (Like the store manager)
  *
- * Purpose:
+ * 🎯 Purpose:
  * Contains the business logic of the application.
+ * This class implements the rules and processes that define
+ * how the system behaves.
  *
- * Technical:
- * Processes data, applies rules, and coordinates between
- * Repository and Converter layers.
+ * ⚙️ Technical:
+ * - Implements the ProductService interface (the service contract).
+ * - Applies business rules before interacting with the database.
+ * - Coordinates between Repository (data access) and Converter (DTO ↔ Entity).
+ * - Marked with @Service so Spring can detect and manage it as a bean.
+ * - Often uses @Transactional to manage database transactions.
  *
- * Communication:
- * - Called by Controller
- * - Uses Repository (data access)
- * - Uses Converter (DTO ↔ Entity transformation)
+ * 🔄 Communication:
+ * - Called by the Controller layer
+ * - Uses Repository to read/write data from the database
+ * - Uses Converter to transform DTO ↔ Entity objects
  *
- * Real-life example:
- * The manager decides:
- * - if there is enough stock
- * - if the order can be processed
+ * 🧩 Interface-based design:
+ * The Controller depends on the ProductService interface,
+ * not directly on this implementation.
  *
- * It also asks the warehouse (Repository) to store or retrieve data,
- * and uses a translator (Converter) to understand the customer request.
+ * This allows the system to have multiple implementations
+ * of the same service if needed.
+ *
+ * Example:
+ * - ProductServiceImpl → normal database operations
+ * - ProductServiceCacheImpl → cached version for faster reads
+ *
+ * Spring automatically injects the correct implementation
+ * using dependency injection.
+ *
+ * If multiple implementations exist, Spring can decide which one
+ * to use through annotations such as:
+ * - @Primary (default implementation)
+ * - @Qualifier (explicit selection)
+ *
+ * 🧾 Real-life example:
+ * The store manager makes decisions such as:
+ * - checking if a product already exists
+ * - validating if an operation is allowed
+ *
+ * Then the manager:
+ * - asks the warehouse (Repository) to store or retrieve data
+ * - uses a translator (Converter) to convert between internal
+ *   system objects and customer-facing data.
  */
 
 package com.erick.spring.service.impl;
@@ -31,6 +57,7 @@ import com.erick.spring.exception.ExistingInstanceException;
 import com.erick.spring.exception.InstanceUndefinedException;
 import com.erick.spring.repository.ProductRepository;
 import com.erick.spring.service.ProductService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,16 +67,21 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
 
-    private ProductRepository productRepository;
-    private ProductConverter productConverter;
+//    private ProductRepository productRepository;
+//    private ProductConverter productConverter;
+//
+//    @Autowired
+//    public ProductServiceImpl(ProductRepository productRepository, ProductConverter productConverter) {
+//        this.productRepository = productRepository;
+//        this.productConverter = productConverter;
+//    }
 
-    @Autowired
-    public ProductServiceImpl(ProductRepository productRepository, ProductConverter productConverter) {
-        this.productRepository = productRepository;
-        this.productConverter = productConverter;
-    }
+    private final ProductRepository productRepository;
+    private final ProductConverter productConverter;
+
 
     @Override
     @Transactional

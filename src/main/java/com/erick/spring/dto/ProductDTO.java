@@ -1,24 +1,34 @@
 /**
  * DTO - Data Transfer Object (Like a simple customer ticket)
  *
- * Purpose:
- * Used to transfer data between layers, especially between
- * the Controller and the outside world (client).
+ * 🎯 Purpose:
+ * This class is used to transfer data between the Controller and the client (API requests/responses).
+ * It defines what data is exposed to the outside world.
  *
- * Technical:
- * Contains only the required fields needed for input/output.
- * Does NOT contain business logic or database-related details.
+ * ⚙️ Technical:
+ * - Contains only the necessary fields (no business logic).
+ * - Does NOT represent the database structure directly.
+ * - Used for validation using annotations (e.g., @NotBlank, @Size, etc.).
+ * - Serializable → allows this object to be converted into a stream (useful for APIs, caching, etc.).
  *
- * Communication:
- * - Used by Controller and Service layers
+ * 🔄 Communication:
+ * - Controller ↔ DTO ↔ Client (JSON)
+ * - Service can also use DTOs to avoid exposing Entities directly.
  *
- * Real-life example:
- * The customer only provides necessary information:
- * - product name
- * - quantity
+ * 🧠 Why not use Entity instead?
+ * - Entities may contain sensitive/internal data (e.g., IDs, timestamps).
+ * - DTOs give full control over what is sent/received.
  *
- * It does not include internal details like database ID,
- * timestamps, or system status.
+ * 🧾 Real-life example:
+ * A customer ticket only includes what the customer provides:
+ * - name
+ * - price
+ * - description
+ *
+ * It does NOT include internal system data like:
+ * - database ID (optional)
+ * - creation date
+ * - system flags
  */
 
 package com.erick.spring.dto;
@@ -30,7 +40,7 @@ import java.io.Serializable;
 public class ProductDTO implements Serializable {
 
     private Integer id;
-    @NotEmpty
+    @NotBlank(message = "Name cannot be null, empty, or only spaces")
     @Size(max = 50, min = 3)
     private String name;
     @NotNull
