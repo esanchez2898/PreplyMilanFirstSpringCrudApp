@@ -43,13 +43,6 @@ import java.util.List;
 @RequestMapping(value = "/api/products")
 @RequiredArgsConstructor // (Lombok) generates the constructor for us, so we don't write it manually.
 public class ProductController {
-
-    // Spring automatically injects a ProductService instance here (constructor injection).
-    // "final" ensures this field is set once and never changed.
-
-    // Why not @Autowired on the field?
-    // With @Autowired, errors appear at runtime (when someone calls the endpoint).
-    // With constructor injection, errors appear at startup — much easier to catch.
     private final ProductService productService;
 
     @GetMapping
@@ -65,27 +58,31 @@ public class ProductController {
     // POST /api/products
     // Receives a JSON body, validates it, and saves a new product.
     @PostMapping
-    public ResponseEntity<String> addProduct(
-            @Validated @RequestBody ProductDTO productDTO,
-            // @RequestBody  → converts the incoming JSON into a ProductDTO object
-            // @Validated    → triggers the validation rules defined in ProductDTO
-            //                 (@NotEmpty, @Size, @DecimalMax, etc.)
-            Errors errors
-            // Errors        → Spring stores the result of @Validated here.
-            //                 If any rule failed, errors.hasErrors() returns true.
-    ) {
+    public ResponseEntity<String> addProduct(@Validated @RequestBody ProductDTO productDTO, Errors errors) {
 
-        // If any validation rule from ProductDTO failed, we stop here.
-        // We throw a custom exception instead of saving invalid data to the database.
-        //
-        // Note: errors.getFieldErrors() contains the specific messages from each
-        // annotation (e.g. "name: must not be empty"), but right now we throw a
-        // generic message. You could improve this later by reading those messages.
         if (errors.hasErrors()) {
             throw new DataNotValidateException("Product validation failed");
         }
 
-        productService.addProduct(productDTO);
+        productService.addProduct(productDTO); // <-- the error message is in ProductServiceImpl
         return new ResponseEntity<>("Product was added to the db", HttpStatus.CREATED);
     }
+
+    @PutMapping(value = "/{id}")
+    public ResponseEntity<String> updateProduct(@PathVariable("id") Integer productId, @Validated @RequestBody ProductDTO productDTO, Errors errors) {
+
+        if (errors.hasErrors()) {
+            throw new DataNotValidateException("Product validation failed");
+        }
+
+        productService.updateProduct(productDTO, productId);
+        return new ResponseEntity<>("Product with id " + productId + " was updated", HttpStatus.OK);
+    }
+
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<String> deleteProductById(@PathVariable("id") Integer productId) {
+        productService.deleteProduct(productId);
+        return new ResponseEntity<>("Product with id " + productId + " was deleted", HttpStatus.OK);
+    }
+
 }
