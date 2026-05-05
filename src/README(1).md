@@ -1,56 +1,14 @@
 # SpringCRUDApp
 
----
+![Java](https://img.shields.io/badge/Java-21-orange?logo=openjdk)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.0.3-brightgreen?logo=springboot)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-blue?logo=postgresql)
+![Maven](https://img.shields.io/badge/Maven-3.8+-red?logo=apachemaven)
 
-## Getting Started
-
-### Prerequisites
-
-- Java 21+
-- Maven 3.8+
-- PostgreSQL running locally
-
-### Steps
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/your-username/SpringCRUDApp.git
-   cd SpringCRUDApp
-   ```
-
-2. Create the database in PostgreSQL:
-   ```sql
-   CREATE DATABASE online_store;
-   ```
-
-3. Update your credentials in `application.properties`.
-
-4. Build and run:
-   ```bash
-   mvn clean install
-   mvn spring-boot:run
-   ```
-
-5. Test the API at `http://localhost:8080/api/products`
-
----
-
-## Key Design Decisions
-
-- **Interface-based services:** `ProductController` depends on the `ProductService` interface, not the implementation. This allows swapping implementations (e.g., adding a cached version) without touching the controller.
-
-
-- **DTO/Entity separation:** `ProductDTO` controls what data is exposed externally; `ProductEntity` handles the database structure. `ModelMapper` handles the mapping via `ProductConverter`.
-
-
-- **Constructor injection:** Lombok's `@RequiredArgsConstructor` is used throughout instead of `@Autowired` for cleaner, testable code.
-
-
-- **Transactional control:** Read operations use `@Transactional(readOnly = true)` for performance; write operations use `@Transactional` to ensure data consistency.
-
----
-
-A RESTful CRUD API built with **Spring Boot 4** for managing products, connected to a **PostgreSQL** database. Follows a clean layered architecture: Controller → Service → Repository, with DTO/Entity separation and centralized exception handling.
+> A RESTful CRUD API built with **Spring Boot 4** for managing products, connected to a **PostgreSQL** database.
+> Follows a clean layered architecture: Controller → Service → Repository, with DTO/Entity separation and centralized exception handling.
+>
+> Built as a learning project to practice Spring Boot best practices.
 
 ---
 
@@ -124,8 +82,8 @@ Client (Postman / Frontend)
    ▼
 [PostgreSQL DB]
 ```
----
 
+---
 
 ## Execution Flow
 
@@ -164,8 +122,6 @@ All write operations are wrapped in `@Transactional`; reads use `@Transactional(
 **8. Response travels back**
 Entity → Converter → DTO → Service → Controller → HTTP Response to the client.
 
----
-
 ### Request lifecycle (simplified)
 
 ```
@@ -193,8 +149,6 @@ HTTP Request
     ▼
 HTTP Response (DTO as JSON)
 ```
-
-
 
 ---
 
@@ -270,3 +224,44 @@ spring.jpa.show-sql=false
 
 > **Note:** The `ddl-auto=update` setting lets Hibernate automatically create or update the `products` table on startup.
 
+---
+
+## Running Locally
+
+### Prerequisites
+
+- Java 21+
+- Maven 3.8+
+- PostgreSQL running locally
+
+### Steps
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/your-username/SpringCRUDApp.git
+   cd SpringCRUDApp
+   ```
+
+2. Create the database in PostgreSQL:
+   ```sql
+   CREATE DATABASE online_store;
+   ```
+
+3. Update your credentials in `application.properties`.
+
+4. Build and run:
+   ```bash
+   mvn clean install
+   mvn spring-boot:run
+   ```
+
+5. Test the API at `http://localhost:8080/api/products`
+
+---
+
+## Key Design Decisions
+
+- **Interface-based services:** `ProductController` depends on the `ProductService` interface, not the implementation. This allows swapping implementations (e.g., adding a cached version) without touching the controller.
+- **DTO/Entity separation:** `ProductDTO` controls what data is exposed externally; `ProductEntity` handles the database structure. `ModelMapper` handles the mapping via `ProductConverter`.
+- **Constructor injection:** Lombok's `@RequiredArgsConstructor` is used throughout instead of `@Autowired` for cleaner, testable code.
+- **Transactional control:** Read operations use `@Transactional(readOnly = true)` for performance; write operations use `@Transactional` to ensure data consistency.

@@ -31,8 +31,8 @@ public interface ProductService {
 
     ProductDTO addProduct(ProductDTO productDTO);
     ProductDTO getProductById(Integer productId);
-    //ProductDTO getProdructByName(String name);
-    ProductDTO updateProduct(ProductDTO productDTO, Integer productId);
+    ProductDTO getProductByName(String name);
+    ProductDTO updateProduct(Integer productId, ProductDTO productDTO);
     void deleteProduct(Integer productId);
     List<ProductDTO> getAllProducts();
 

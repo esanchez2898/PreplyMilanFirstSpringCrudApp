@@ -35,5 +35,4 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Integer>
 
     Optional<ProductEntity> findByName(String name);
 
-
 }
